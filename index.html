@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محول الرابط إلى QR Code مع التحميل</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+    }
+    input {
+        padding: 10px;
+        width: 300px;
+        margin-bottom: 20px;
+    }
+    button {
+        padding: 10px 20px;
+        margin: 10px;
+        cursor: pointer;
+    }
+    #qrcode {
+        margin: 20px auto;
+    }
+    #downloadButton {
+        display: none; /* إخفاء زر التحميل في البداية */
+    }
+</style>
+</head>
+<body>
+
+<h1>محول الرابط إلى QR Code</h1>
+<input type="text" id="linkInput" placeholder="أدخل الرابط هنا">
+<br>
+<button onclick="generateQRCode()">إنشاء QR Code</button>
+<button id="downloadButton" onclick="downloadQRCode()">تحميل QR Code</button>
+<br><br>
+<div id="qrcode"></div>
+
+<script>
+    let qrCode;
+
+    function generateQRCode() {
+        const link = document.getElementById("linkInput").value;
+        const qrCodeContainer = document.getElementById("qrcode");
+        const downloadButton = document.getElementById("downloadButton");
+
+        // مسح المحتوى السابق
+        qrCodeContainer.innerHTML = "";
+        downloadButton.style.display = "none"; // إخفاء زر التحميل
+
+        // تحقق من أن الرابط ليس فارغاً
+        if (link.trim() === "") {
+            alert("يرجى إدخال رابط صالح!");
+            return;
+        }
+
+        // إنشاء QR Code
+        qrCode = new QRCode(qrCodeContainer, {
+            text: link,
+            width: 256,
+            height: 256,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+        });
+
+        // إظهار زر التحميل بعد إنشاء QR Code
+        downloadButton.style.display = "inline-block";
+    }
+
+    function downloadQRCode() {
+        if (!qrCode) {
+            alert("يرجى أولاً إنشاء QR Code قبل التحميل!");
+            return;
+        }
+
+        // العثور على عنصر <img> داخل حاوية QR Code
+        const qrCodeImage = document.querySelector("#qrcode img");
+
+        if (qrCodeImage) {
+            const link = document.createElement("a");
+            link.href = qrCodeImage.src;
+            link.download = "qrcode.png";
+            link.click();
+        } else {
+            alert("لم يتم العثور على صورة QR Code!");
+        }
+    }
+</script>
+
+</body>
+</html>
